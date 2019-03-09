@@ -1,23 +1,29 @@
-import { AppPage } from './app.po';
-import { browser, logging } from 'protractor';
+'use strict'; // necessary for es6 output in node
 
-describe('workspace-project App', () => {
-  let page: AppPage;
+import { browser, element, by } from 'protractor';
 
-  beforeEach(() => {
-    page = new AppPage();
+/* tslint:disable:quotemark */
+describe('Dynamic Form', function () {
+
+    beforeAll(function () {
+        browser.get('');
+    });
+
+    it('should submit form', function () {
+      let firstNameElement = element.all(by.css('input[id=firstName]')).get(0);
+      expect(firstNameElement.getAttribute('value')).toEqual('Bombasto');
+
+      let emailElement = element.all(by.css('input[id=emailAddress]')).get(0);
+      let email = 'test@test.com';
+      emailElement.sendKeys(email);
+      expect(emailElement.getAttribute('value')).toEqual(email);
+
+      element(by.css('select option[value="solid"]')).click();
+
+      let saveButton = element.all(by.css('button')).get(0);
+      saveButton.click().then(function() {
+        expect(element(by.xpath("//strong[contains(text(),'Saved the following values')]")).isPresent()).toBe(true);
+      });
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to dynamic-form!');
-  });
-
-  afterEach(async () => {
-    // Assert that there are no errors emitted from the browser
-    const logs = await browser.manage().logs().get(logging.Type.BROWSER);
-    expect(logs).not.toContain(jasmine.objectContaining({
-      level: logging.Level.SEVERE,
-    } as logging.Entry));
-  });
 });
